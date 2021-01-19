@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { css } from '@emotion/css'
 import SliderContent from './SliderContent'
@@ -9,11 +8,44 @@ const Slider = props => {
   const getWidth = () => window.innerWidth
 
   const [state, setState] = useState({
+    activeIndex: 0,
     translate: 0,
     transition: 0.45
   })
 
-  const { translate, transition } = state
+  const { activeIndex, translate, transition } = state
+
+  const nextSlide = () => {
+    if (activeIndex === props.slides.length - 1) {
+      return setState({
+        ...state,
+        activeIndex: 0,
+        translate: 0
+      })
+    }
+
+    setState({
+      ...state,
+      activeIndex: activeIndex + 1,
+      translate: (activeIndex + 1) * getWidth()
+    })
+  };
+
+  const prevSlide = () => {
+    if (activeIndex === 0) {
+      return setState({
+        ...state,
+        activeIndex: props.slides.length -1,
+        translate: (props.slides.length -1) * getWidth()
+      })
+    }
+
+    setState({
+      ...state,
+      activeIndex: activeIndex - 1,
+      translate: (activeIndex - 1) * getWidth()
+    })
+  };
 
   // width of SliderContent is all images witdth combine
   return (
@@ -28,8 +60,8 @@ const Slider = props => {
         ))}
         
       </SliderContent>
-      <Arrow />
-      <Arrow />
+      <Arrow direction="left" handleClick={prevSlide}/>
+      <Arrow direction="right" handleClick={nextSlide}/>
     </div>
   )
 }
