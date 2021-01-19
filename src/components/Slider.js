@@ -1,12 +1,36 @@
-import React from 'react';
-import SliderContent from './SliderContent';
+/** @jsx jsx */
+import React, { useState } from 'react'
+import { css, jsx } from '@emotion/core'
+import SliderContent from './SliderContent'
 
-const Slider = () => {
+const Slider = props => {
+  const getWidth = () => window.innerWidth
+
+  const [state, setState] = useState({
+    translate: 0,
+    transition: 0.45
+  })
+
+  const { translate, transition } = state
+
   return (
-    <div style={{height:'100%', width:'100%', background: '#333'}}>
-      <SliderContent/>
+    <div css={SliderCSS}>
+      <SliderContent
+        translate={translate}
+        transition={transition}
+        width={getWidth()}
+      >
+      </SliderContent>
     </div>
   )
 }
 
-export default Slider;
+const SliderCSS = css`
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  margin: 0 auto;
+  overflow: hidden;
+`
+
+export default Slider
