@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react'
-import { css, jsx } from '@emotion/css'
+import { css } from '@emotion/css'
 import SliderContent from './SliderContent'
+import Slide from './Slide';
 
 const Slider = props => {
   const getWidth = () => window.innerWidth
@@ -13,6 +14,7 @@ const Slider = props => {
 
   const { translate, transition } = state
 
+  console.log(props)
   return (
     <div className={SliderCSS}>
       <SliderContent
@@ -20,6 +22,10 @@ const Slider = props => {
         transition={transition}
         width={getWidth()}
       >
+        {props.slides.map((slide, index) => (
+          <Slide key={slide} content={slide} />
+        ))}
+        
       </SliderContent>
     </div>
   )
