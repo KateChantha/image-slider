@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { css } from '@emotion/css'
 import SliderContent from './SliderContent'
 import Slide from './Slide';
@@ -60,12 +60,24 @@ const Slider = props => {
           <Slide key={slide} content={slide} />
         ))}
       </SliderContent>
-
-      <Arrow direction="left" handleClick={prevSlide}/>
-      <Arrow direction="right" handleClick={nextSlide}/>
+      
+      {!props.autoPlay && (
+        <Fragment>
+          <Arrow direction="left" handleClick={prevSlide}/>
+          <Arrow direction="right" handleClick={nextSlide}/>
+        </Fragment>
+      )}
+      
       <Dots slides={props.slides} activeIndex={activeIndex}/>
     </div>
   )
+}
+
+// if autoplay is null, we will show the arrows
+// if autoplay is pass as a props, we will hide the arrows
+Slider.defaultProps = {
+  slides: [],
+  autoPlay: null
 }
 
 // Overflow: hidden the Slider component and this will place other images content off the screen

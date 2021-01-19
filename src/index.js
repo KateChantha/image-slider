@@ -13,7 +13,7 @@ const images = [
 
 ReactDOM.render(
   <React.StrictMode>
-    <Slider slides={images} />
+    <Slider slides={images} autoPlay={3} />
   </React.StrictMode>,
   document.getElementById('root')
 );
