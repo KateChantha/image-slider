@@ -1,6 +1,6 @@
-/** @jsx jsx */
+
 import React, { useState } from 'react'
-import { css, jsx } from '@emotion/core'
+import { css, jsx } from '@emotion/css'
 import SliderContent from './SliderContent'
 
 const Slider = props => {
@@ -14,7 +14,7 @@ const Slider = props => {
   const { translate, transition } = state
 
   return (
-    <div css={SliderCSS}>
+    <div className={SliderCSS}>
       <SliderContent
         translate={translate}
         transition={transition}
@@ -31,6 +31,7 @@ const SliderCSS = css`
   width: 100vw;
   margin: 0 auto;
   overflow: hidden;
+  ${'' /* background: red; */}
 `
 
 export default Slider
