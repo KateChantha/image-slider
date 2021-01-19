@@ -1,6 +1,6 @@
 const Slider = () => {
   return (
-    <div>THIS IS SLIDER</div>
+    <div style={{height:'100%', width:'100%'}}>THIS IS SLIDER</div>
   )
 }
 
