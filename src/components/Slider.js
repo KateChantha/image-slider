@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { css } from '@emotion/css'
 import SliderContent from './SliderContent'
 import Slide from './Slide';
-import Arrow from './Arrow'
+import Arrow from './Arrow';
+import Dots from './Dots';
 
 const Slider = props => {
   const getWidth = () => window.innerWidth
@@ -58,10 +59,11 @@ const Slider = props => {
         {props.slides.map((slide, index) => (
           <Slide key={slide} content={slide} />
         ))}
-        
       </SliderContent>
+
       <Arrow direction="left" handleClick={prevSlide}/>
       <Arrow direction="right" handleClick={nextSlide}/>
+      <Dots slides={props.slides} activeIndex={activeIndex}/>
     </div>
   )
 }
