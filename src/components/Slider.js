@@ -9,35 +9,68 @@ import Dots from './Dots';
 const getWidth = () => window.innerWidth;
 
 const Slider = props => {
+  const { slides } = props;
+  const firstSlide = slides[0]
+  const secondSlide = slides[1]
+  const lastSlide = slides[slides.length - 1]
+
   const [state, setState] = useState({
-    activeIndex: 0,
-    translate: 0,
-    transition: 0.45
+    activeSlide: 0,
+    translate: getWidth(),
+    transition: 0.45,
+    _slides: [lastSlide, firstSlide, secondSlide]
   })
-  const { activeIndex, translate, transition } = state;
+  const { activeSlide, translate, transition, _slides } = state;
   // useRef to presist state throughout app life cycle
   const autoPlayRef = useRef();
+  const transitionRef = useRef();
+  const resizeRef = useRef();
 
   // RUNS EVERYTIME
-  // to update autoPlayRef.current with the update activeIndex inside function nextSlide 
+  // to update autoPlayRef.current with the update activeSlide inside function nextSlide 
   useEffect(() => {
     autoPlayRef.current = nextSlide;
+    transitionRef.current = smoothTransition;
+    resizeRef.current = handleResize;
   })
 
   // RUNS ONCE to setup interval - we want this useEffect to run only once, that's why we use useRef and pass autoPlayRef.current() as a clousure to setInterval
   useEffect(() => {
     // Implement clousure to return autoPlayRef.current()which always refer to 
-    // the update function nextSlide with update activeIndex
+    // the update function nextSlide with update activeSlide
     const play = () => {
       autoPlayRef.current();
     };
+
+    const smooth = (e) => {
+      if (e.target.className.includes('sliderContent')) {
+        transitionRef.current();
+      }
+    }
+
+    const resize = () => {
+      resizeRef.current();
+    }
+
+    const transitonEnd = window.addEventListener('transitionend', smooth);
+    const onResize = window.addEventListener('resize', resize);
     
+    let interval = null;
     if (props.autoPlay !== null) {
-      const interval = setInterval(play, props.autoPlay * 1000)
-      return () => clearInterval(interval);
+      interval = setInterval(play, props.autoPlay * 1000)
+    }
+
+    return () => {
+      if (props.autoPlay !== null) clearInterval(interval);
+      window.removeEventListener('transitionend', transitonEnd);
+      window.removeEventListener('resize', onResize);
     }
     
   }, [props.autoPlay])
+
+  useEffect(() => {
+    if (transition === 0) setState({ ...state, transition: 0.45 })
+  }, [transition])
 
   /** ====================================
    * NOTE: Alternative approach
@@ -57,38 +90,48 @@ const Slider = props => {
       }, [nextSlide])
     * =======================================
    */
+  
+   const handleResize = () => {
+    setState({
+      ...state,
+      translate: getWidth(),
+      transition: 0
+    })
+   }
 
-  const nextSlide = () => {
-    if (activeIndex === props.slides.length - 1) {
-      return setState({
-        ...state,
-        activeIndex: 0,
-        translate: 0
-      })
-    }
+  const smoothTransition = () => {
+    let _slides = []
+
+    // We're at the last slide.
+    if (activeSlide === slides.length - 1)
+      _slides = [slides[slides.length - 2], lastSlide, firstSlide]
+    // We're back at the first slide.
+    else if (activeSlide === 0) _slides = [lastSlide, firstSlide, secondSlide]
+    // Create an array of the previous last slide, and the next two slides that follow it.
+    // [ slides[activeSlide - 1], slides[activeSlide], slides[activeSlide + 1] ]
+    else _slides = slides.slice(activeSlide - 1, activeSlide + 2)
 
     setState({
       ...state,
-      activeIndex: activeIndex + 1,
-      translate: (activeIndex + 1) * getWidth()
+      _slides,
+      transition: 0,
+      translate: getWidth()
     })
-  };
+  }
 
-  const prevSlide = () => {
-    if (activeIndex === 0) {
-      return setState({
-        ...state,
-        activeIndex: props.slides.length -1,
-        translate: (props.slides.length -1) * getWidth()
-      })
-    }
-
+  const nextSlide = () =>
     setState({
       ...state,
-      activeIndex: activeIndex - 1,
-      translate: (activeIndex - 1) * getWidth()
+      translate: translate + getWidth(),
+      activeSlide: activeSlide === slides.length - 1 ? 0 : activeSlide + 1
     })
-  };
+
+  const prevSlide = () =>
+    setState({
+      ...state,
+      translate: 0,
+      activeSlide: activeSlide === 0 ? slides.length - 1 : activeSlide - 1
+    })
 
   // width of SliderContent is all images witdth combine
   return (
@@ -96,10 +139,10 @@ const Slider = props => {
       <SliderContent
         translate={translate}
         transition={transition}
-        width={getWidth() * props.slides.length}
+        width={getWidth() * _slides.length}
       >
-        {props.slides.map((slide, index) => (
-          <Slide key={slide} content={slide} />
+        {_slides.map((slide, index) => (
+          <Slide key={slide + index} content={slide} />
         ))}
       </SliderContent>
       
@@ -110,7 +153,7 @@ const Slider = props => {
         </Fragment>
       )}
       
-      <Dots slides={props.slides} activeIndex={activeIndex}/>
+      <Dots slides={props.slides} activeSlide={activeSlide}/>
     </div>
   )
 }

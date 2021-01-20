@@ -13,7 +13,7 @@ const Dot = ({ active }) => (
   />
 )
 
-const Dots = ({ slides, activeIndex }) => (
+const Dots = ({ slides, activeSlide }) => (
   <div
     className={css`
       position: absolute;
@@ -25,7 +25,7 @@ const Dots = ({ slides, activeIndex }) => (
     `}
   >
     {slides.map((slide, i) => (
-      <Dot key={slide} active={activeIndex === i} />
+      <Dot key={slide} active={activeSlide === i} />
     ))}
   </div>
 )

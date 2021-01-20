@@ -13,3 +13,10 @@
 a. To set the ref to the nextSlide
 b. to declare the interval and remove it. Note: props.autoplay is a depandency of this useEffect and we should check if it's not a null before setting an interval. 
 
+#### Part-3 Smooth Transition
+- create a new array to contain the proper 3 slides.
+- create a function to update the proper slides in the new array everytime after slide chaged.
+- Event listener: transitioned event is fired when a CSS transition has completed. Use this event listener to trigger our smoothTransition function.
+- Handeling browser resize by setting the resize event and write a function to set the proper translate value when resize event has finished. To do so, we will create another ref.
+
+
