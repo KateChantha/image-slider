@@ -1,20 +1,40 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useRef, useEffect } from 'react'
 import { css } from '@emotion/css'
 import SliderContent from './SliderContent'
 import Slide from './Slide';
 import Arrow from './Arrow';
 import Dots from './Dots';
 
-const Slider = props => {
-  const getWidth = () => window.innerWidth
+// utils function
+const getWidth = () => window.innerWidth;
 
+const Slider = props => {
   const [state, setState] = useState({
     activeIndex: 0,
     translate: 0,
     transition: 0.45
   })
+  const { activeIndex, translate, transition } = state;
+  const autoPlayRef = useRef();
 
-  const { activeIndex, translate, transition } = state
+  // have useEffect runs everytime after re-render content
+  // so that autoPlayRef.current will always get the update activeIndex inside function nextSlide 
+  useEffect(() => {
+    autoPlayRef.current = nextSlide;
+  })
+
+  useEffect(() => {
+    // Implement clousure
+    const play = () => {
+      autoPlayRef.current();
+    };
+
+    if (props.autoPlay !== null) {
+      const interval = setInterval(play, props.autoPlay * 1000)
+      return () => clearInterval(interval);
+    }
+    
+  }, [props.autoPlay])
 
   const nextSlide = () => {
     if (activeIndex === props.slides.length - 1) {
