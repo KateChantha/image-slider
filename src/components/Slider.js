@@ -60,6 +60,10 @@ const Slider = props => {
     
   }, [props.autoPlay])
 
+  useEffect(() => {
+    if (transition === 0) setState({ ...state, transition: 0.45 })
+  }, [transition])
+
   /** ====================================
    * NOTE: Alternative approach
    * benefit: don't need useRef, and another useEffect to run everytime 
