@@ -15,26 +15,48 @@ const Slider = props => {
     transition: 0.45
   })
   const { activeIndex, translate, transition } = state;
+  // useRef to presist state throughout app life cycle
   const autoPlayRef = useRef();
 
-  // have useEffect runs everytime after re-render content
-  // so that autoPlayRef.current will always get the update activeIndex inside function nextSlide 
+  // RUNS EVERYTIME
+  // to update autoPlayRef.current with the update activeIndex inside function nextSlide 
   useEffect(() => {
     autoPlayRef.current = nextSlide;
   })
 
+  // RUNS ONCE to setup interval - we want this useEffect to run only once, that's why we use useRef and pass autoPlayRef.current() as a clousure to setInterval
   useEffect(() => {
-    // Implement clousure
+    // Implement clousure to return autoPlayRef.current()which always refer to 
+    // the update function nextSlide with update activeIndex
     const play = () => {
       autoPlayRef.current();
     };
-
+    
     if (props.autoPlay !== null) {
       const interval = setInterval(play, props.autoPlay * 1000)
       return () => clearInterval(interval);
     }
     
   }, [props.autoPlay])
+
+  /** ====================================
+   * NOTE: Alternative approach
+   * benefit: don't need useRef, and another useEffect to run everytime 
+   * Tradeoff: this useUseEffect will run everytime that the nextSlide update and it will cause setInterval to run multiple times
+   * ------------------------------------
+   * useEffect(() => {
+        const play = () => {
+          nextSlide();
+        };
+        
+        if (props.autoPlay !== null) {
+          const interval = setInterval(play, props.autoPlay * 1000)
+          return () => clearInterval(interval);
+        }
+        
+      }, [nextSlide])
+    * =======================================
+   */
 
   const nextSlide = () => {
     if (activeIndex === props.slides.length - 1) {
