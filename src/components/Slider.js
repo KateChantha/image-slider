@@ -24,12 +24,14 @@ const Slider = props => {
   // useRef to presist state throughout app life cycle
   const autoPlayRef = useRef();
   const transitionRef = useRef();
+  const resizeRef = useRef();
 
   // RUNS EVERYTIME
   // to update autoPlayRef.current with the update activeSlide inside function nextSlide 
   useEffect(() => {
     autoPlayRef.current = nextSlide;
     transitionRef.current = smoothTransition;
+    resizeRef.current = handleResize;
   })
 
   // RUNS ONCE to setup interval - we want this useEffect to run only once, that's why we use useRef and pass autoPlayRef.current() as a clousure to setInterval
@@ -46,7 +48,12 @@ const Slider = props => {
       }
     }
 
+    const resize = () => {
+      resizeRef.current();
+    }
+
     const transitonEnd = window.addEventListener('transitionend', smooth);
+    const onResize = window.addEventListener('resize', resize);
     
     let interval = null;
     if (props.autoPlay !== null) {
@@ -56,6 +63,7 @@ const Slider = props => {
     return () => {
       if (props.autoPlay !== null) clearInterval(interval);
       window.removeEventListener('transitionend', transitonEnd);
+      window.removeEventListener('resize', onResize);
     }
     
   }, [props.autoPlay])
@@ -82,6 +90,14 @@ const Slider = props => {
       }, [nextSlide])
     * =======================================
    */
+  
+   const handleResize = () => {
+    setState({
+      ...state,
+      translate: getWidth(),
+      transition: 0
+    })
+   }
 
   const smoothTransition = () => {
     let _slides = []
